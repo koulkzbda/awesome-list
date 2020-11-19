@@ -1,0 +1,19 @@
+<div [formGroup]="workdayForm">
+  <div formArrayName="tasks">
+    <div class="d-flex" *ngFor="let task of tasks.controls; let i = index">
+      <legend *ngIf="i === 0">Tâche la plus importante</legend>
+      <legend *ngIf="i === 1">Tâches de seconde importance</legend>
+      <legend *ngIf="i === 3">Tâches additionnelles</legend>
+      <app-workday-form-tasks-item [task]="task" [index]="i" class="w-100">
+      </app-workday-form-tasks-item>
+      <button class="btn btn-light btn-sm ml-5 h-50 align-self-center" (click)="removeTask(i)"><i
+          class="material-icons md-18 md-grey align-middle">clear</i></button>
+    </div>
+
+
+  </div>
+</div>
+<div class="text-center">
+  <app-workday-form-tasks-add (addedTask)="onAddedTask()">
+  </app-workday-form-tasks-add>
+</div>

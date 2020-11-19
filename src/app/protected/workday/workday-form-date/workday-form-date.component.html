@@ -1,0 +1,17 @@
+<div class="row my-5">
+  <div class="col-md-6 mx-auto">
+    <div class="form-inline">
+      <div class="form-group">
+        <div class="input-group border rounded">
+          <input ngbDatepicker #d="ngbDatepicker" (valueChanges)="selectDate($event)" [formControl]="dueDate"
+            type="text" class="form-control">
+          <div class="input-group-append">
+            <button class="btn btn-outline-dark calendar" (click)="d.toggle()"><span class="material-icons">
+                event
+              </span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

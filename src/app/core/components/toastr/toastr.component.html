@@ -1,0 +1,2 @@
+<ngb-alert *ngIf="(toastr$ | async) as toastr" [type]="toastr.category" (close)="close()">
+  {{ toastr.message }}</ngb-alert>

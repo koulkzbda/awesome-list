@@ -1,0 +1,9 @@
+<div [formGroup]="task" class="form-group row">
+  <div class="col-sm-6 px-0">
+    <label class="col-sm-1 col-form-label px-0">{{index + 1}}.</label>
+    <input formControlName="title" type="text" class="form-control">
+  </div>
+  <div class="col-sm-5 py-2">
+    <ngb-rating formControlName="todo" [max]="5"></ngb-rating>
+  </div>
+</div>

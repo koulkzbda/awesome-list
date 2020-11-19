@@ -1,0 +1,13 @@
+<form [formGroup]="workdayForm">
+  <app-workday-form-date [dueDate]="dueDate"></app-workday-form-date>
+  <app-workday-form-tasks [workdayForm]="workdayForm" [tasks]="tasks"></app-workday-form-tasks>
+  <app-workday-form-notes [notes]="notes"></app-workday-form-notes>
+
+  <div class="text-right">
+    <button (click)="submit()" type="submit" class="btn btn-success btn-lg" [disabled]="workdayForm.invalid">
+      Sauvegarder
+    </button>
+  </div>
+</form>
+
+<pre>{{workdayForm.value | json}}</pre>
