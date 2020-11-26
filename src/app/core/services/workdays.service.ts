@@ -26,16 +26,9 @@ export class WorkdaysService {
   public save(workday: Workday): Observable<Workday> {
     const url = `${environment.firebase.firestore.baseURL}/workdays?key=${environment.firebase.apiKey}`;
     const data = this.getWorkdayForFirestore(workday);
-    const jwt: string = localStorage.getItem('token');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`
-      })
-    };
     this.loaderService.setLoading(true);
 
-    return this.http.post<Workday>(url, data, httpOptions).pipe(
+    return this.http.post<Workday>(url, data).pipe(
       tap(_ => this.toastrService.showToastr({
         category: 'success',
         message: 'Votre journée de travail a été enregistrée avec succès.'
@@ -47,15 +40,8 @@ export class WorkdaysService {
   public update(workday: Workday): Observable<Workday> {
     const url = `${environment.firebase.firestore.baseURL}/workdays/${workday.id}?key=${environment.firebase.apiKey}&currentDocument.exists=true`;
     const data = this.getWorkdayForFirestore(workday);
-    const jwt: string = localStorage.getItem('token');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`
-      })
-    };
 
-    return this.http.patch<Workday>(url, data, httpOptions).pipe(
+    return this.http.patch<Workday>(url, data).pipe(
       tap(_ => this.toastrService.showToastr({
         category: 'success',
         message: 'Votre journée de travail a été sauvegardée avec succès.'
@@ -68,16 +54,8 @@ export class WorkdaysService {
   public getWorkdayByDate(date: string, userId: string): Observable<Workday | null> {
     const url = `${environment.firebase.firestore.baseURL}:runQuery?key=${environment.firebase.apiKey}`;
     const data = this.getSructuredQuery(date, userId);
-    const jwt: string = localStorage.getItem('token');
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`
-      })
-    };
-
-    return this.http.post<Workday>(url, data, httpOptions).pipe(
+    return this.http.post<Workday>(url, data).pipe(
       switchMap((data: any) => {
         const document = data[0].document;
         if (!document) {
@@ -91,16 +69,8 @@ export class WorkdaysService {
   public getWorkdayByUser(userId: string): Observable<Workday[] | null> {
     const url = `${environment.firebase.firestore.baseURL}:runQuery?key=${environment.firebase.apiKey}`;
     const data = this.getWorkdayByUserQuery(userId);
-    const jwt: string = localStorage.getItem('token');
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`
-      })
-    };
-
-    return this.http.post<Workday[]>(url, data, httpOptions).pipe(
+    return this.http.post<Workday[]>(url, data).pipe(
       switchMap((workdaysData: any) => {
         const workdays: Workday[] = [];
         workdaysData.forEach(data => {
@@ -112,6 +82,19 @@ export class WorkdaysService {
         return of(workdays);
       }),
       catchError(error => this.errorService.handleError(error))
+    );
+  }
+
+  public remove(workday: Workday): Observable<Workday | null> {
+    const url = `${environment.firebase.firestore.baseURL}/workdays/${workday.id}?key=${environment.firebase.apiKey}`;
+
+    return this.http.delete<Workday>(url).pipe(
+      tap(_ => this.toastrService.showToastr({
+        category: 'success',
+        message: 'Votre journée de travail a été supprimée avec succès.'
+      })),
+      catchError(error => this.errorService.handleError(error)),
+      finalize(() => this.loaderService.setLoading(false))
     );
   }
 
@@ -241,5 +224,3 @@ export class WorkdaysService {
     };
   }
 }
-
-

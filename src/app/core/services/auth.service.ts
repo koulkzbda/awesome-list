@@ -5,10 +5,9 @@ import { ErrorService } from './error.service';
 import { UserService } from './user.service';
 import { catchError, finalize, switchMap, tap, delay } from 'rxjs/operators';
 import { environment } from './../../../environments/environment';
-import { BehaviorSubject, Observable, of, VirtualTimeScheduler } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from './../../shared/models/user';
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -35,18 +34,15 @@ export class AuthService {
       password: pass,
       returnSecureToken: true
     };
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    };
 
     this.loaderService.setLoading(true);
 
-    return this.http.post<User | null>(url, data, httpOptions).pipe(
+    return this.http.post<User | null>(url, data).pipe(
       switchMap((data: any) => {
         const userId: string = data.localId;
         const jwt: string = data.idToken;
         this.saveAuthData(userId, jwt);
-        return this.userService.get(userId, jwt);
+        return this.userService.get(userId);
       }),
       tap(user => this.user.next(user)),
       tap(_ => this.logoutTimer(3600)),
@@ -64,13 +60,9 @@ export class AuthService {
       returnSecureToken: true
     };
 
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    };
-
     this.loaderService.setLoading(true);
 
-    return this.http.post(url, data, httpOptions).pipe(
+    return this.http.post(url, data).pipe(
       switchMap((data: any) => {
         const jwt: string = data.idToken;
         const user = new User({
@@ -79,7 +71,7 @@ export class AuthService {
           name: username
         });
         this.saveAuthData(user.id, jwt);
-        return this.userService.save(user, jwt);
+        return this.userService.save(user);
       }),
       tap(user => this.user.next(user)),
       tap(_ => this.logoutTimer(3600)),

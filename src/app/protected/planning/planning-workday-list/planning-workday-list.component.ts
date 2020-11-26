@@ -1,8 +1,6 @@
 import { WorkdaysService } from './../../../core/services/workdays.service';
 import { AuthService } from './../../../core/services/auth.service';
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { Workday } from 'src/app/shared/models/workday';
 
 @Component({
@@ -12,7 +10,6 @@ import { Workday } from 'src/app/shared/models/workday';
   ]
 })
 export class PlanningWorkdayListComponent implements OnInit {
-  public workdays$: Observable<Workday[]>;
   public workdays: Workday[];
 
   constructor(
@@ -20,11 +17,10 @@ export class PlanningWorkdayListComponent implements OnInit {
     private workdayService: WorkdaysService
   ) { }
 
-  onWorkdayRemoved(displayDate: string): void {
-    this.workdays = this.workdays.filter(workday =>
-      displayDate !== workday.displayDate
-    );
-    this.workdays$ = of(this.workdays);
+  onWorkdayRemoved(workday: Workday): void {
+    this.workdayService.remove(workday)
+      .subscribe(_ => this.workdays = this.workdays.filter(el => el.id !== workday.id)
+      );
   }
 
   ngOnInit(): void {

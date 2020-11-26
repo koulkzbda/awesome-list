@@ -12,39 +12,27 @@ import { switchMap } from 'rxjs/operators';
 export class UserService {
   constructor(private http: HttpClient) { }
 
-  public save(user: User, jwt: string): Observable<User | null> {
+  public save(user: User): Observable<User | null> {
     const url =
       `${environment.firebase.firestore.baseURL}/users?key=
     ${environment.firebase.apiKey}&documentId=${user.id}`;
 
     const data = this.getDataForFirestore(user);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`
-      })
-    };
 
-    return this.http.post(url, data, httpOptions).pipe(
+    return this.http.post(url, data).pipe(
       switchMap((data: any) => {
         return of(this.getUserFromFirestore(data.fields));
       })
     );
   }
 
-  public get(userId: string, jwt: string): Observable<User | null> {
+  public get(userId: string): Observable<User | null> {
     const url =
       `${environment.firebase.firestore.baseURL}:runQuery?key=
       ${environment.firebase.apiKey}`;
     const data = this.getStructuredQuery(userId);
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`
-      })
-    };
 
-    return this.http.post(url, data, httpOptions).pipe(
+    return this.http.post(url, data).pipe(
       switchMap((data: any) => {
         return of(this.getUserFromFirestore(data[0].document.fields));
       })
@@ -55,15 +43,10 @@ export class UserService {
     const url =
       `${environment.firebase.firestore.baseURL}/users/${user.id}?currentDocument.exists=true&key=
       ${environment.firebase.apiKey}`;
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      })
-    };
+
     const data = this.getDataForFirestore(user);
 
-    return this.http.patch(url, data, httpOptions).pipe(
+    return this.http.patch(url, data).pipe(
       switchMap((data: any) => {
         return of(this.getUserFromFirestore(data.fields));
       })

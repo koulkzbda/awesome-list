@@ -1,7 +1,7 @@
 import { Workday } from './../../../shared/models/workday';
 import { AuthService } from './../../../core/services/auth.service';
 import { WorkdaysService } from './../../../core/services/workdays.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, AbstractControl, Validators } from '@angular/forms';
 import { NgbDateStructAdapter } from '@ng-bootstrap/ng-bootstrap/datepicker/adapters/ngb-date-adapter';
@@ -20,12 +20,19 @@ export class WorkdayFormComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private workdaysService: WorkdaysService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.workdayId = '';
-    this.workdayForm = this.createWorkdayForm();
+    this.route.queryParams.subscribe(params => {
+      this.workdayId = '';
+      this.workdayForm = this.createWorkdayForm();
+      if (params.date) {
+        const date: Date = new Date(+params.date);
+        this.dueDate.setValue(date);
+      }
+    });
   }
 
   get dueDate(): AbstractControl { return this.workdayForm.get('dueDate'); }

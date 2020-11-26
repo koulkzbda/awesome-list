@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
     }
 
     const userId = localStorage.getItem('userId');
-    this.userService.get(userId, token).subscribe(user => {
+    this.userService.get(userId).subscribe(user => {
       this.authService.autoLogin(user);
     });
   }

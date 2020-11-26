@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Workday } from './../../../shared/models/workday';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
@@ -10,12 +11,23 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class PlanningWorkdayItemComponent {
 
   @Input() workday: Workday;
-  @Output() workdayRemoved = new EventEmitter<string>();
+  @Output() workdayRemoved = new EventEmitter<Workday>();
 
-  constructor() { }
+  constructor(private router: Router) { }
 
-  removeWorkday(displayDate: string): void {
-    this.workdayRemoved.emit(displayDate);
+  removeWorkday(): void {
+    this.workdayRemoved.emit(this.workday);
+  }
+
+  goToWorkday(workday: Workday): void {
+    this.router.navigate(
+      ['app/workday'],
+      {
+        queryParams: {
+          date: workday.dueDate
+        }
+      }
+    );
   }
 
 }
